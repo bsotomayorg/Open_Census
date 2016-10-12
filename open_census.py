@@ -85,26 +85,37 @@ def readWXP(FILE_PATH):
             elif line[0]=="L" and "Label" in line:
                 E.label = line[6:-1] 
             elif line[0]=="S" and "Selectable" in line:
-                if line[11:-1].lower()=="yes":
-                    E.selectable = True
-                else:
-                    E.selectable = False
+                E.selectable = (line[11:-1].lower() == "yes")
+                #if line[11:-1].lower()=="yes":
+                #    E.selectable = True
+                #else:
+                #    E.selectable = False
         elif current_str=="variable":
             if line[0]=="N" and "Name" in line:
                 V.name = line[5:-1]
                 E.variables.append(V)
             elif line[0]=="L" and "Label" in line:
                 V.label = line[6:-1] 
-            elif line[0]=="F" and "FileName" in line:
-                V.filename = line[9:-1]
-            elif line[0]=="F" and "FieldSize" in line:
-                V.field_size = int(line[10:-1])
+            elif line[0]=="F":
+                if "FileName" in line:
+                    V.filename = line[9:-1]
+                elif "FieldSize" in line:
+                    V.field_size = line[10:-1]
+            #elif line[0]=="F" and "FileName" in line:
+            #    V.filename = line[9:-1]
+            #elif line[0]=="F" and "FieldSize" in line:
+            #    V.field_size = int(line[10:-1])
             elif line[0]=="T" and "Type" in line:
                 V.type = line[5:-1]
-            elif line[0]=="R" and "RangeMin" in line:
-                V.rangemin = int(line[9:-1])
-            elif line[0]=="R" and "RangeMax" in line:
-                V.rangemax = int(line[9:-1])
+            elif line[0]=="R":
+                if "RangeMin" in line:
+                    V.rangemin = int(line[9:-1])
+                elif "RangeMax" in line:
+                    V.rangemax = int(line[9:-1])
+            #elif line[0]=="R" and "RangeMin" in line:
+            #    V.rangemin = int(line[9:-1])
+            #elif line[0]=="R" and "RangeMax" in line:
+            #    V.rangemax = int(line[9:-1])
         elif current_str=="value_labels":
             if line[0]=="V" and line[1]=="L":
                 VL = ValueLabel()
