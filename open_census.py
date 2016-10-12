@@ -54,17 +54,12 @@ Parmátro de entrada:
 def readWXP(FILE_PATH):
     fo = open(FILE_PATH)
     current_str = ""
-    current_ent = ""
-    current_var = ""
-    count = 1 ### 
 
     CENSO = General()
-
     E = Entity()
     V = Variable()
 
     for line in fo:
-        count += 1 ### 
         if line[0]=="[":
             if "General" in line:
                 current_str = "general"
