@@ -7,7 +7,7 @@ __email__   = "bsotomayor92@gmail.com"
 __version__ = "12/10/16"
 
 """
-Script que permite obtener una serie de consultas en lenguaje de consultas de Redatam almacenándolo en un archivo *.txt.
+Script que permite obtener una serie de consultas en lenguaje propio de Redatam almacenándolo en un archivo *.txt.
 También es posible generar un script que, dada una serie de archivos *.csv, puede incoporar los datos a una base de datos Sqlite3.
 """
 
