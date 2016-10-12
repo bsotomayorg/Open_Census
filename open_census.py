@@ -150,38 +150,6 @@ def createSqliteScript(G):
                 str_sql += "CREATE TABLE %s_%s (REDCODE, %s);\n" % (E.name, V.name, V.name)
                 str_sql += ".import CSV/%s_%s.csv %s_%s\n\n" % (E.name, V.name, E.name, V.name)
     return str_sql
-
-"""
-Método que crea un documento 'markdown' (*.md) en donde se describe la información
-contenida en las diferentes tablas obtenidas de la base de datos censal.
-Parámetro de entrada:
-* G (List) : Lista de entidades.
-"""
-def createMD(G):
-    str_header = "# Documentación (%s)\nDiccionario: \"%s\"\n\n" % (G.label, G.name)
-    str_md = ""
-    list_entities = []
-    for E in G.entities:
-        _first = True
-        for V in E.variables:
-            if len(V.value_labels)>0:
-                if _first:
-                    str_md += "\n------------------------\n"
-                    #str_md += "### Entity %s (%s) \n" % (E.name, E.label)
-                    str_md += "## Entity %s\n" % (E.name)
-
-                    list_entities.append(E.name)
-                    _first = False
-                str_md += "\n- %s.**%s**: %s.\n\n" % (E.name, V.name, V.label)
-                str_md += "\t| Nombre Campo | Valor | Descripción |\n"
-                str_md += "\t| --- | --- | --- |\n"
-            for VL in V.value_labels:
-                str_md += "\t| %s | %s | %s |\n" % ( VL.name, VL.number, VL.value )
-
-    str_entities = "### Entidades\n"
-    for e in list_entities:
-        str_entities += "* [Entity %s](#entity-%s)\n" % (e, e.lower().replace(" ","-"))
-    return (str_header+str_entities+str_md)
  
 """
 Método que permite obtener una serie de consultas para extraer datos de forma masiva de una base de datos Redatam.
@@ -212,7 +180,6 @@ def readArgs(argv):
 
     PATH_FILE, PATH_DBF_FILES, LEVEL = "","",""
 
-    B_DOCUMENTATION = ("--documentation" in argv) or ("--doc" in argv) or ("--md" in argv)
     B_SCRIPT_SQLITE = ("--sqlite" in argv) or ("--script" in argv)
 
     if len(sys.argv) > 0:
