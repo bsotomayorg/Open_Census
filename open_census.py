@@ -8,8 +8,7 @@ __version__ = "26/08/16"
 
 """
 Script que permite obtener una serie de consultas en lenguaje de consultas de Redatam almacenándolo en un archivo *.txt.
-También permite generar un script que, dada una serie de archivos *.csv, puede incorporarlo en una base de datos Sqlite3 
-sencilla.
+También es posible generar un script que, dada una serie de archivos *.csv, puede incoporar los datos a una base de datos Sqlite3.
 """
 
 ### --- clases básicas --- ###
@@ -47,7 +46,7 @@ class ValueLabel:
 ### --- métodos --- ###
 
 """
-Realiza una lectura del archivo *.wxp para crear instancias de Entidades y Variables con la información que contiene.
+Realiza una lectura de un archivo *.wxp para crear instancias de Entidades y Variables con la información que contiene.
 
 Parmátro de entrada:
 * FILE_PATH: String que corresponde a la ruta del archivo con formato "*.wxp".
@@ -126,11 +125,12 @@ def readWXP(FILE_PATH):
     return CENSO
 
 """
-Método que genera un script sqlite3 que permite crear la base de datos importando la información
-de archivos *.csv
+Método que genera un script sqlite3 que permite crear la base de datos importando la información contenida en archivos *.csv
 
 Parámetro de entrada:
 * G (List) : Lista de entidades.
+
+Retorna un string que corresponde al script sqlite.
 """
 def createSqliteScript(G):
     str_sql = ".separator ,\n.mode column\n\n"
@@ -153,10 +153,13 @@ def createSqliteScript(G):
  
 """
 Método que permite obtener una serie de consultas para extraer datos de forma masiva de una base de datos Redatam.
+
 Parámetros de entrada:
 * G (List) : Lista de entidades.
 * path (String) : Ruta en donde se almacenarán los archivos *.dbf tras consultar en Redatam.
 * unit (String) : Unidad de área geográfica con la que se extraerán los datos. Ejemplos: REGION, PROVINCIA, ZONA, COMUNA, MANZENT, etc.
+
+Retorna un string que contiene la serie de consultas escritas en lenguaje propio de Redatam.
 """
 def dumpQueries(G, path, unit): 
     script_str = "RUNDEF Job\n\tSELECTION ALL\n\n"
@@ -173,8 +176,11 @@ def dumpQueries(G, path, unit):
 
 """
 Método que procesa los argumentos escritos en consola al ejecutar el script.
+
 Parámetros de entrada:
 * argv (List) : Lista de argumentos escritos en consola.
+
+Retorna la ruta del archivo, la ruta de la carpeta con archivos *.dbf, el nivel geográfico a utilizar y si generar el script sqlite3 o no (valor booleano)
 """
 def readArgs(argv):
 
@@ -201,7 +207,7 @@ def readArgs(argv):
     return PATH_FILE, PATH_DBF_FILES, LEVEL, B_SCRIPT_SQLITE
 
 
-""" MAIN """
+### MAIN ###
 
 # se capturan los diferentes parámetros ingresados por consola
 PATH_FILE, PATH_DBF_FILES, LEVEL, B_SCRIPT_SQLITE = readArgs(sys.argv)
