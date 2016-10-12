@@ -210,12 +210,12 @@ PATH_FILE, PATH_DBF_FILES, LEVEL, B_SCRIPT_SQLITE = readArgs(sys.argv)
 if PATH_FILE!="":
     G = readWXP(PATH_FILE)
 
-if PATH_FILE!="" and PATH_DBF_FILES!="" and LEVEL!="":
-    # se genera archivo *.txt con queries Redatam
-    f = open("Redatam_Queries.txt", "w")
-    f.write(dumpQueries(G, PATH_DBF_FILES, LEVEL))
-    f.close()
-    print "Redatam Queries file generated as \"Redatam_Queries.txt\"."
+    if PATH_DBF_FILES!="" and LEVEL!="":
+        # se genera archivo *.txt con queries Redatam
+        f = open("Redatam_Queries.txt", "w")
+        f.write(dumpQueries(G, PATH_DBF_FILES, LEVEL))
+        f.close()
+        print "Redatam Queries file generated as \"Redatam_Queries.txt\"."
 
 if B_SCRIPT_SQLITE:
     # se genera script *.sql que permite importar los archivos *.csv a una BD Sqlite3
