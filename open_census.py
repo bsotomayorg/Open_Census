@@ -4,7 +4,7 @@ import sys
 
 __author__  = "Boris Sotomayor"
 __email__   = "bsotomayor92@gmail.com"
-__version__ = "26/08/16"
+__version__ = "12/10/16"
 
 """
 Script que permite obtener una serie de consultas en lenguaje de consultas de Redatam almacenándolo en un archivo *.txt.
