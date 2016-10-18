@@ -200,29 +200,31 @@ def readArgs(argv):
     print "File *.wxp: '%s'\nDBFs Folder: '%s'\nLevel: '%s'\n" % (PATH_FILE, PATH_DBF_FILES, LEVEL)
     return PATH_FILE, PATH_DBF_FILES, LEVEL, B_SCRIPT_SQLITE
 
+# --
 
-### MAIN ###
+def main():
+    # se capturan los diferentes parámetros ingresados por consola
+    PATH_FILE, PATH_DBF_FILES, LEVEL, B_SCRIPT_SQLITE = readArgs(sys.argv)
 
-# se capturan los diferentes parámetros ingresados por consola
-PATH_FILE, PATH_DBF_FILES, LEVEL, B_SCRIPT_SQLITE = readArgs(sys.argv)
+    # se procesa el archivo "*.wxp" para 
+    if PATH_FILE!="":
+        G = readWXP(PATH_FILE)
 
-# se procesa el archivo "*.wxp" para 
-if PATH_FILE!="":
-    G = readWXP(PATH_FILE)
+        if PATH_DBF_FILES!="" and LEVEL!="":
+            # se genera archivo *.txt con queries Redatam
+            f = open("Redatam_Queries.txt", "w")
+            f.write(dumpQueries(G, PATH_DBF_FILES, LEVEL))
+            f.close()
+            print "Redatam Queries file generated as \"Redatam_Queries.txt\"."
 
-    if PATH_DBF_FILES!="" and LEVEL!="":
-        # se genera archivo *.txt con queries Redatam
-        f = open("Redatam_Queries.txt", "w")
-        f.write(dumpQueries(G, PATH_DBF_FILES, LEVEL))
+    if B_SCRIPT_SQLITE:
+        # se genera script *.sql que permite importar los archivos *.csv a una BD Sqlite3
+        f = open("script.sql", "w")
+        f.write(createSqliteScript(G))
         f.close()
-        print "Redatam Queries file generated as \"Redatam_Queries.txt\"."
+        print "Script Sqlite generated as \"script.sql\"."
 
-if B_SCRIPT_SQLITE:
-    # se genera script *.sql que permite importar los archivos *.csv a una BD Sqlite3
-    f = open("script.sql", "w")
-    f.write(createSqliteScript(G))
-    f.close()
-    print "Script Sqlite generated as \"script.sql\"."
-
+if __name__ == '__main__':
+    main()
 
 
