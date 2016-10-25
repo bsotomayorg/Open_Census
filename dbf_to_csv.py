@@ -50,5 +50,3 @@ else:
 	for i in os.listdir(dbf_dir):
 		createCSV(dbf_dir, csv_dir, i)
 		print "File '%s%s' created.." % (csv_dir,i)
-
-
