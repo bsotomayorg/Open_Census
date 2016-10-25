@@ -1,6 +1,6 @@
 # Open Census - Framework para extraer y procesar datos censales presentes en bases Redatam
 
-Con el fin de facilitar el proceso de extracción y procesamiento de datos almacenados en bases Redatam, en el Laboratorio de EcoInformática se desarrolló un __framework_ _ o marco de trabajo que permite, dada una base de datos Redatam, extraer de forma masiva la información contenida en ellas, cambiar el formato de extracción a un formato de uso común e incorporar la información extraída a una base de datos relacional Sqlite. Se hace uso de _scripts_ (desarrollados usando Python 2.7.12) que se encuentran disponibles para su uso y descarga.
+Con el fin de facilitar el proceso de extracción y procesamiento de datos almacenados en bases Redatam, en el Laboratorio de EcoInformática se desarrolló un _framework_ o marco de trabajo que permite, dada una base de datos Redatam, extraer de forma masiva la información contenida en ellas, cambiar el formato de extracción a un formato de uso común e incorporar la información extraída a una base de datos relacional Sqlite. Se hace uso de _scripts_ (desarrollados usando Python 2.7.12) que se encuentran disponibles para su uso y descarga.
 
 En la Figura 1 se muestra un diagrama general del _framework_ desarrollado. Cuenta con tres módulos los cuales se detallará su finalidad y uso a continuación.
 
