@@ -36,11 +36,10 @@ En donde "[nombre_archivo]" corresponde al nombre del archivo en formato \*.wxp 
 
 Módulo que se aplica en los casos cuando se requiere cambiar de formato a múltiples archivos *.dbf para convertirlos en archivos *.csv, como por ejemplo en los archivos extraídos en la sección anterior.
 
-Este _script_ requiere de la instalación del paquete python "dbfpy" (disponible en https://pypi.python.org/pypi/dbfpy/2.3.1).
-
 ![Figura 3](imgs/M2.png)
 
-**Figura 3.** Diagrama del módulo de conversión de formato de archivos, considerando un “input” de archivos extraídos desde Redatam.
+**Figura 3.** Diagrama del módulo de conversión de formato de archivos, considerando un “input” de archivos extraídos desde Redatam. (\*) Este _script_ requiere de la instalación del paquete python "dbfpy" (disponible en https://pypi.python.org/pypi/dbfpy/2.3.1).
+
 
 Para hacer uso de la herramienta se debe escribir en consola lo siguiente:
 
