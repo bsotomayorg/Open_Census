@@ -197,7 +197,7 @@ def readArgs(argv):
             elif not "-" in arg:
                 LEVEL = arg 
 
-    print "File *.wxp: '%s'\nDBFs Folder: '%s'\nLevel: '%s'\n" % (PATH_FILE, PATH_DBF_FILES, LEVEL)
+    print "Archivo *.wxp: '%s'\nCarpeta para DBFs: '%s'\nNivel: '%s'\n" % (PATH_FILE, PATH_DBF_FILES, LEVEL)
     return PATH_FILE, PATH_DBF_FILES, LEVEL, B_SCRIPT_SQLITE
 
 # --
@@ -215,14 +215,14 @@ def main():
             f = open("Redatam_Queries.txt", "w")
             f.write(dumpQueries(G, PATH_DBF_FILES, LEVEL))
             f.close()
-            print "Redatam Queries file generated as \"Redatam_Queries.txt\"."
+            print "Archivo de consultas fue generado como \"Redatam_Queries.txt\"."
 
     if B_SCRIPT_SQLITE:
         # se genera script *.sql que permite importar los archivos *.csv a una BD Sqlite3
         f = open("script.sql", "w")
         f.write(createSqliteScript(G))
         f.close()
-        print "Script Sqlite generated as \"script.sql\"."
+        print "Script Sqlite fue generado como \"script.sql\"."
 
 if __name__ == '__main__':
     main()
