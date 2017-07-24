@@ -24,10 +24,10 @@ El _script_ python denominado "open_census.py" permite, dado un archivo *.wxp de
 Para hacer uso del _script_ se debe escribir en consola:
 
 ```bash
-$ python open_census.py [nombre_archivo].wxp [ruta_carpeta_dbf*] [nivel_geo*]
+$ python open_census.py --wxp_file [nombre_archivo].wxp --dbf_folder [ruta_carpeta_dbf*] --level [nivel_geo*]
 ```
 
-Donde "[nombre_archivo]" corresponde al nombre del archivo en formato \*.wxp exportado de Redatam. "[ruta_carpeta_dbf\*]" Es la carpeta donde Redatam exportará los archivos \*.dbf (opcional, por defecto se exportarán en "C:/".) y "[nivel_geo\*]" es el nivel geográfico del cual se obtendrán los datos censales (opcional, por defecto es "MANZENT" que equivale al nivel de "Manzana Censal" en las bases de datos analizadas).
+Donde "[nombre_archivo]" corresponde al nombre del archivo en formato \*.wxp exportado de Redatam. "[ruta_carpeta_dbf\*]" Es la carpeta donde Redatam exportará los archivos \*.dbf (opcional, por defecto se exportarán en "C:/".) y "[nivel_geo\*]" es el nivel geográfico del cual se obtendrán los datos censales (opcional, por defecto es "MANZENT" que equivale al nivel de "Manzana Censal" en las bases de datos analizadas). Si no se agregan los campos opcionales, tampoco se debe agregar el parámetro asociado.
 
 
 </br>
@@ -65,7 +65,7 @@ Si existe la necesidad de importar estos datos extraídos a una base de datos Sq
 Es decir, la estructura de ejecución es:
 
 ```bash
-$ python open_census.py [nombre_archivo].wxp --script
+$ python open_census.py --wxp_file [nombre_archivo].wxp --csv-folder [ruta_carpeta_csv] --script
 ```
 
 Una vez obtenido el archivo “script.sql” se debe ejecutar en la consola de Sqlite para que cree la base de datos correspondiente.
