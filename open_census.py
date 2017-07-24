@@ -60,6 +60,7 @@ def readWXP(FILE_PATH):
     V = Variable()
 
     for line in fo:
+
         if line[0]=="[":
             if "General" in line:
                 current_str = "general"
@@ -78,7 +79,7 @@ def readWXP(FILE_PATH):
             if line[0]=="N" and "Name" in line:
                 E.name = line[5:-1]
             elif line[0]=="L" and "Label" in line:
-                E.label = line[6:-1] 
+                E.label = line[6:-1]
             elif line[0]=="S" and "Selectable" in line:
                 E.selectable = (line[11:-1].lower() == "yes")
         elif current_str=="variable":
@@ -126,23 +127,25 @@ Parámetro de entrada:
 
 Retorna un string que corresponde al script sqlite.
 """
-def createSqliteScript(G):
-    str_sql = ".separator ,\n.mode column\n\n"
+def createSqliteScript(G, path):
+    str_sql = ".separator ,\n.mode csv\n\n"
     for E in G.entities:
         for V in E.variables:
             if len(V.value_labels)!=0: # create tables with value labels (not empty tables..)
-                str_sql += "-- TABLE \"%s_%s\"\n" % (E.name, V.name)
+                str_sql += "/* TABLE \"%s_%s\"*/\n" % (E.name, V.name)
                 str_sql += "CREATE TABLE %s_%s (REDCODE, " % (E.name, V.name)
 
                 for i in range(V.rangemin, V.rangemax+1):
-                    str_sql += "F_%i, " % i
+                    if i<0:
+                        i = "_%i" % abs(i)
+                    str_sql += "F_%s, " % i
 
                 str_sql += "F_T);\n"
-                str_sql += ".import CSV/%s_%s.csv %s_%s\n\n" % (E.name, V.name, E.name, V.name)
+                str_sql += ".import %s%s_%s.csv %s_%s\n\n" % (path, E.name, V.name, E.name, V.name)
             elif E.selectable:
-                str_sql += "-- TABLE \"%s_%s\"\n " % (E.name, V.name)
+                str_sql += "/* TABLE \"%s_%s\"*/\n" % (E.name, V.name)
                 str_sql += "CREATE TABLE %s_%s (REDCODE, %s);\n" % (E.name, V.name, V.name)
-                str_sql += ".import CSV/%s_%s.csv %s_%s\n\n" % (E.name, V.name, E.name, V.name)
+                str_sql += ".import %s%s_%s.csv %s_%s\n\n" % (path, E.name, V.name, E.name, V.name)
     return str_sql
  
 """
@@ -177,54 +180,81 @@ Parámetros de entrada:
 Retorna la ruta del archivo, la ruta de la carpeta con archivos *.dbf, el nivel geográfico a utilizar y si generar el script sqlite3 o no (valor booleano)
 """
 def readArgs(argv):
-
-    PATH_FILE, PATH_DBF_FILES, LEVEL = "","",""
+    PATH_FILE, PATH_DBF_FILES, PATH_CSV_FILES, LEVEL = "","","",""
 
     B_SCRIPT_SQLITE = ("--sqlite" in argv) or ("--script" in argv)
 
     if len(sys.argv) > 0:
+        # valores por defecto:
         PATH_FILE = "./"
         PATH_DBF_FILES = "C:/"
         LEVEL = "MANZENT"
 
-        for arg in sys.argv[1:]:
-            if ".wxp" in arg:
-                PATH_FILE = arg
-            elif "/" in arg and PATH_FILE != arg:
-                if arg[-1]!="/":
-                    arg+="/"
-                PATH_DBF_FILES = arg
-            elif not "-" in arg:
-                LEVEL = arg 
+        str_out = ""
 
-    print "Archivo *.wxp: '%s'\nCarpeta para DBFs: '%s'\nNivel: '%s'\n" % (PATH_FILE, PATH_DBF_FILES, LEVEL)
-    return PATH_FILE, PATH_DBF_FILES, LEVEL, B_SCRIPT_SQLITE
+        # obtenemos opciones desde consola
+        for i in range(len(argv)):
+            flag = argv[i]
+
+            if (flag == "--wxp_path" or flag == "--wxp_file"):
+                PATH_FILE = argv[i+1]
+                str_out +="Archivo *.wxp: '%s'\n" % PATH_FILE
+
+            elif (flag == "--dbf_folder"):
+                PATH_DBF_FILES = argv[i+1]
+                if (PATH_DBF_FILES[-1:]!="/"):
+                    PATH_DBF_FILES += "/"
+
+            elif (flag == "--csv_folder"):
+                PATH_CSV_FILES = argv[i+1]
+                if (PATH_CSV_FILES[-1:]!="/"):
+                    PATH_CSV_FILES += "/"
+                str_out +="Carpeta para CSVs: '%s'\n" % PATH_CSV_FILES
+
+            elif (flag == "--level"):
+                LEVEL = argv[i+1]
+    
+        # outputs obligatorios
+        if PATH_DBF_FILES=="C:/":
+            str_out +="Carpeta para DBFs: '%s' (valor por defecto)\n" % PATH_DBF_FILES
+        else:
+            str_out +="Carpeta para DBFs: '%s'\n" % PATH_DBF_FILES
+        if LEVEL == "MANZENT":
+            str_out +="Nivel: '%s' (valor por defecto)\n" % LEVEL
+        else:
+            str_out +="Nivel: '%s'\n" % LEVEL
+
+        if B_SCRIPT_SQLITE:
+            str_out +="Generar Script: 'True'"
+
+    print str_out
+    return PATH_FILE, PATH_DBF_FILES, PATH_CSV_FILES, LEVEL, B_SCRIPT_SQLITE
 
 # --
 
 def main():
     # se capturan los diferentes parámetros ingresados por consola
-    PATH_FILE, PATH_DBF_FILES, LEVEL, B_SCRIPT_SQLITE = readArgs(sys.argv)
-
+    PATH_FILE, PATH_DBF_FILES, PATH_CSV_FILES, LEVEL, B_SCRIPT_SQLITE = readArgs(sys.argv)
+    
     # se procesa el archivo "*.wxp" para 
-    if PATH_FILE!="":
+    if PATH_FILE!="" :
         G = readWXP(PATH_FILE)
 
-        if PATH_DBF_FILES!="" and LEVEL!="":
+        if PATH_DBF_FILES!="" and LEVEL!="" and (not B_SCRIPT_SQLITE):
             # se genera archivo *.txt con queries Redatam
             f = open("Redatam_Queries.txt", "w")
             f.write(dumpQueries(G, PATH_DBF_FILES, LEVEL))
             f.close()
+            
             print "Archivo de consultas fue generado como \"Redatam_Queries.txt\"."
 
     if B_SCRIPT_SQLITE:
         # se genera script *.sql que permite importar los archivos *.csv a una BD Sqlite3
         f = open("script.sql", "w")
-        f.write(createSqliteScript(G))
+        f.write(createSqliteScript(G, path=PATH_CSV_FILES))
         f.close()
+        
         print "Script Sqlite fue generado como \"script.sql\"."
 
 if __name__ == '__main__':
     main()
-
-
