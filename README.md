@@ -65,7 +65,7 @@ Si existe la necesidad de importar estos datos extraídos a una base de datos Sq
 Es decir, la estructura de ejecución es:
 
 ```bash
-$ python open_census.py --wxp_file [nombre_archivo].wxp --csv-folder [ruta_carpeta_csv] --script
+$ python open_census.py --wxp_file [nombre_archivo].wxp --csv_folder [ruta_carpeta_csv] --script
 ```
 
 Una vez obtenido el archivo “script.sql” se debe ejecutar en la consola de Sqlite para que cree la base de datos correspondiente.
