@@ -27,7 +27,7 @@ Para hacer uso del _script_ se debe escribir en consola:
 $ python open_census.py [nombre_archivo].wxp [ruta_carpeta_dbf*] [nivel_geo*]
 ```
 
-En donde "[nombre_archivo]" corresponde al nombre del archivo en formato \*.wxp exportado de Redatam. "[ruta_carpeta_dbf\*]" Es la carpeta en donde Redatam exportará los archivos \*.dbf (opcional, por defecto se exportarán en "C:/".) y "[nivel_geo\*]" es el nivel geográfico del cual se obtendrán los datos censales (opcional, por defecto es "MANZENT" que equivale al nivel de "Manzana Censal" en las bases de datos analizadas).
+Donde "[nombre_archivo]" corresponde al nombre del archivo en formato \*.wxp exportado de Redatam. "[ruta_carpeta_dbf\*]" Es la carpeta donde Redatam exportará los archivos \*.dbf (opcional, por defecto se exportarán en "C:/".) y "[nivel_geo\*]" es el nivel geográfico del cual se obtendrán los datos censales (opcional, por defecto es "MANZENT" que equivale al nivel de "Manzana Censal" en las bases de datos analizadas).
 
 
 </br>
@@ -49,7 +49,7 @@ $ python dbf_to_csv.py [carpeta_origen] [carpeta_destino]
 ```
 
 
-Donde “[carpeta_origen]” corresponde a la carpeta en donde existen los archivos *.dbf y “[carpeta_destino]” es la carpeta donde se almacenarán los archivos convertidos en formato *.csv.
+Donde “[carpeta_origen]” corresponde a la carpeta donde existen los archivos *.dbf y “[carpeta_destino]” es la carpeta donde se almacenarán los archivos convertidos en formato *.csv.
 
 </br>
 
