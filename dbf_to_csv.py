@@ -37,7 +37,7 @@ def createCSV(dir_in, dir_out, file_name):
 ### MAIN ###
 
 if len(sys.argv)<3:
-	print "\nMissing arguments..!\nEnter: 'python dbf_to_csv.py <dbf_folder> <csv_folder>'\n"
+	print "\nFaltan argumentos!\nPor favor ingresar comando: 'python dbf_to_csv.py <dbf_folder> <csv_folder>'\n"
 else:
 	dbf_dir = sys.argv[1]
 	csv_dir = sys.argv[2]
@@ -49,4 +49,4 @@ else:
 
 	for i in os.listdir(dbf_dir):
 		createCSV(dbf_dir, csv_dir, i)
-		print "File '%s%s' created.." % (csv_dir,i)
+		print "Archivo '%s%s' creado." % (csv_dir,i)
