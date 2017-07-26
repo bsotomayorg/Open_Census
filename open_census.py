@@ -105,7 +105,7 @@ def readWXP(FILE_PATH):
                 VL = ValueLabel()
                 VL.name   = line[0:line.find("=")]
                 VL.number = line[line.find("=")+1:line.find(" ")]
-                VL.value = line[line.find(" ")+1:-1]
+                VL.value = line[line.find(" ")+1:-2]
                 V.value_labels.append(VL)
         elif current_str=="general":
             if line[0]=="L" and "Label" in line:
