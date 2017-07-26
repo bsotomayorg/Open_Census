@@ -77,29 +77,29 @@ def readWXP(FILE_PATH):
                 current_str = "value_labels"
         if current_str=="entity":
             if line[0]=="N" and "Name" in line:
-                E.name = line[5:-1]
+                E.name = line[5:-2]
             elif line[0]=="L" and "Label" in line:
-                E.label = line[6:-1]
+                E.label = line[6:-2]
             elif line[0]=="S" and "Selectable" in line:
-                E.selectable = (line[11:-1].lower() == "yes")
+                E.selectable = (line[11:-2].lower() == "yes")
         elif current_str=="variable":
             if line[0]=="N" and "Name" in line:
-                V.name = line[5:-1]
+                V.name = line[5:-2]
                 E.variables.append(V)
             elif line[0]=="L" and "Label" in line:
-                V.label = line[6:-1] 
+                V.label = line[6:-2] 
             elif line[0]=="F":
                 if "FileName" in line:
-                    V.filename = line[9:-1]
+                    V.filename = line[9:-2]
                 elif "FieldSize" in line:
-                    V.field_size = int(line[10:-1])
+                    V.field_size = int(line[10:-2])
             elif line[0]=="T" and "Type" in line:
-                V.type = line[5:-1]
+                V.type = line[5:-2]
             elif line[0]=="R":
                 if "RangeMin" in line:
-                    V.rangemin = int(line[9:-1])
+                    V.rangemin = int(line[9:-2])
                 elif "RangeMax" in line:
-                    V.rangemax = int(line[9:-1])
+                    V.rangemax = int(line[9:-2])
         elif current_str=="value_labels":
             if line[0]=="V" and line[1]=="L":
                 VL = ValueLabel()
@@ -109,9 +109,9 @@ def readWXP(FILE_PATH):
                 V.value_labels.append(VL)
         elif current_str=="general":
             if line[0]=="L" and "Label" in line:
-                CENSO.label = line[6:-1]
+                CENSO.label = line[6:-2]
             elif line[0]=="N" and "Name" in line:
-                CENSO.name = line[5:-1]
+                CENSO.name = line[5:-2]
 
     fo.close()
 
