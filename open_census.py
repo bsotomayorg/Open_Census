@@ -8,7 +8,7 @@ __version__ = "01/08/17"
 
 """
 Script que permite obtener una serie de consultas en lenguaje propio de Redatam almacenándolo en un archivo *.txt.
-También es posible generar un script que, dada una serie de archivos *.csv, puede incoporar los datos a una base de datos Sqlite3.
+También es posible generar un script sqlite3 que, dada una serie de archivos *.csv, puede incoporar los datos a una base de datos Sqlite3.
 """
 
 ### --- clases básicas --- ###
