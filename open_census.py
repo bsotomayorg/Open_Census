@@ -4,7 +4,7 @@ import sys
 
 __author__  = "Boris Sotomayor"
 __email__   = "bsotomayor92@gmail.com"
-__version__ = "12/10/16"
+__version__ = "01/08/17"
 
 """
 Script que permite obtener una serie de consultas en lenguaje propio de Redatam almacenándolo en un archivo *.txt.
@@ -52,7 +52,7 @@ Parmátro de entrada:
 * FILE_PATH: String que corresponde a la ruta del archivo con formato "*.wxp".
 """
 def readWXP(FILE_PATH):
-    fo = open(FILE_PATH)
+    fo = open(FILE_PATH, "r")
     current_str = ""
 
     CENSO = General()
@@ -60,7 +60,6 @@ def readWXP(FILE_PATH):
     V = Variable()
 
     for line in fo:
-
         if line[0]=="[":
             if "General" in line:
                 current_str = "general"
@@ -77,41 +76,41 @@ def readWXP(FILE_PATH):
                 current_str = "value_labels"
         if current_str=="entity":
             if line[0]=="N" and "Name" in line:
-                E.name = line[5:-2]
+                E.name = line[5:].rstrip()
             elif line[0]=="L" and "Label" in line:
-                E.label = line[6:-2]
-            elif line[0]=="S" and "Selectable" in line:
-                E.selectable = (line[11:-2].lower() == "yes")
+                E.label = line[6:].rstrip()
+            elif line[0]=="S" and "Selectable=YES" in line:
+                E.selectable = True
         elif current_str=="variable":
             if line[0]=="N" and "Name" in line:
-                V.name = line[5:-2]
+                V.name = line[5:].rstrip()
                 E.variables.append(V)
             elif line[0]=="L" and "Label" in line:
-                V.label = line[6:-2] 
+                V.label = line[6:].rstrip() 
             elif line[0]=="F":
                 if "FileName" in line:
-                    V.filename = line[9:-2]
+                    V.filename = line[9:].rstrip()
                 elif "FieldSize" in line:
-                    V.field_size = int(line[10:-2])
+                    V.field_size = float(line[10:].rstrip())
             elif line[0]=="T" and "Type" in line:
                 V.type = line[5:-2]
             elif line[0]=="R":
                 if "RangeMin" in line:
-                    V.rangemin = int(line[9:-2])
+                    V.rangemin = int(line[9:].rstrip())
                 elif "RangeMax" in line:
-                    V.rangemax = int(line[9:-2])
+                    V.rangemax = int(line[9:].rstrip())
         elif current_str=="value_labels":
             if line[0]=="V" and line[1]=="L":
                 VL = ValueLabel()
                 VL.name   = line[0:line.find("=")]
                 VL.number = line[line.find("=")+1:line.find(" ")]
-                VL.value = line[line.find(" ")+1:-2]
+                VL.value = line[line.find(" ")+1:].rstrip()
                 V.value_labels.append(VL)
         elif current_str=="general":
             if line[0]=="L" and "Label" in line:
-                CENSO.label = line[6:-2]
+                CENSO.label = line[6:].rstrip()
             elif line[0]=="N" and "Name" in line:
-                CENSO.name = line[5:-2]
+                CENSO.name = line[5:].rstrip()
 
     fo.close()
 
@@ -129,23 +128,36 @@ Retorna un string que corresponde al script sqlite.
 """
 def createSqliteScript(G, path):
     str_sql = ".separator ,\n.mode csv\n\n"
+
     for E in G.entities:
-        for V in E.variables:
-            if len(V.value_labels)!=0: # create tables with value labels (not empty tables..)
-                str_sql += "/* TABLE \"%s_%s\"*/\n" % (E.name, V.name)
-                str_sql += "CREATE TABLE %s_%s (REDCODE, " % (E.name, V.name)
+        if (E.selectable == True):
+            # se crea la tabla con todos los campos extraidos
+            str_sql += "/* TABLE \"%s\" */\n" % (E.name)
+            str_sql += "CREATE TABLE %s(REDCODE" % (E.name)
+            for V in E.variables:
+                str_sql += ", %s" % V.name.upper()
+            str_sql += ");\n"
+            str_sql += ".import %s%s.csv %s\n" % (path, E.name, E.name)
+        else:
+            for V in E.variables:
+                b_filter = (V.rangemax <= 255)
+                
+                if (b_filter):
+                    if len(V.value_labels)!=0: #creamos tablas con etiquetas de valores
+                        str_sql += "/* TABLE \"%s_%s\" */\n" % (E.name, V.name)
+                        str_sql += "CREATE TABLE %s_%s (REDCODE, " % (E.name, V.name)
 
-                for i in range(V.rangemin, V.rangemax+1):
-                    if i<0:
-                        i = "_%i" % abs(i)
-                    str_sql += "F_%s, " % i
+                        for i in range(V.rangemin, V.rangemax+1):
+                            if i < 0:
+                                i = "_%i" % abs(i)
+                            str_sql += "F_%s, " % i
 
-                str_sql += "F_T);\n"
-                str_sql += ".import %s%s_%s.csv %s_%s\n\n" % (path, E.name, V.name, E.name, V.name)
-            elif E.selectable:
-                str_sql += "/* TABLE \"%s_%s\"*/\n" % (E.name, V.name)
-                str_sql += "CREATE TABLE %s_%s (REDCODE, %s);\n" % (E.name, V.name, V.name)
-                str_sql += ".import %s%s_%s.csv %s_%s\n\n" % (path, E.name, V.name, E.name, V.name)
+                        str_sql += "F_T);\n"
+                        str_sql += ".import %s%s_%s.csv %s_%s\n\n" % (path, E.name, V.name, E.name, V.name)
+                    elif E.selectable:
+                        str_sql += "/* TABLE \"%s_%s\" */\n" % (E.name, V.name)
+                        str_sql += "CREATE TABLE %s_%s (REDCODE, %s);\n" % (E.name, V.name, V.name)
+                        str_sql += ".import %s%s_%s.csv %s_%s\n\n" % (path, E.name, V.name, E.name, V.name)     
     return str_sql
  
 """
@@ -160,14 +172,25 @@ Retorna un string que contiene la serie de consultas escritas en lenguaje propio
 """
 def dumpQueries(G, path, unit): 
     script_str = "RUNDEF Job\n\tSELECTION ALL\n\n"
+
     for E in G.entities:
-        for V in E.variables:
-            if E.selectable: 
-                script_str += "// Codes of %s\n" % E.name
-                script_str += str("TABLE %s_%s\n\tAS AREALIST\n\tOF %s, %s.%s 10.0\n\tOUTPUTFILE DBF \"%s%s_%s.dbf\"\n\tOVERWRITE\n\n" % (E.name, V.name, E.name, E.name, V.name, path, E.name, V.name))
-            else: 
-                script_str += "// %s-Level Data (Variable %s.%s)\n" % (unit.upper(), E.name, V.name)
-                script_str += str("TABLE %s_%s\n\tAS AREALIST\n\tOF %s, %s.%s 10.0\n\tOUTPUTFILE DBF \"%s%s_%s.dbf\"\n\tOVERWRITE\n\n" % (E.name, V.name, unit, E.name, V.name, path, E.name, V.name))
+        L = []
+        for i in range(len(E.variables)):
+            V = E.variables[i]
+
+            b_filter = (E.selectable or V.rangemax <= 255)
+
+            if (b_filter):                
+                if E.selectable:
+                    str_fields = ""
+                    L.append("%s.%s %s " % (E.name, V.name, V.field_size))
+                    
+                    if (i==(len(E.variables)-1)): # si se leyeron todas las variables, se genera la query
+                        script_str += "// Codes of %s\n" % E.name
+                        script_str += str("TABLE %s_%s\n\tAS AREALIST\n\tOF %s, %s\n\tOUTPUTFILE DBF \"%s%s.dbf\"\n\tOVERWRITE\n\n" % (E.name, V.name, E.name, ", ".join(L), path, E.name))
+                else: 
+                    script_str += "// %s-Level Data (Variable %s.%s)\n" % (unit.upper(), E.name, V.name)
+                    script_str += str("TABLE %s_%s\n\tAS AREALIST\n\tOF %s, %s.%s %s\n\tOUTPUTFILE DBF \"%s%s_%s.dbf\"\n\tOVERWRITE\n\n" % (E.name, V.name, unit, E.name, V.name, V.field_size, path, E.name, V.name))
     return script_str
 
 
@@ -183,14 +206,13 @@ def readArgs(argv):
     PATH_FILE, PATH_DBF_FILES, PATH_CSV_FILES, LEVEL = "","","",""
 
     B_SCRIPT_SQLITE = ("--sqlite" in argv) or ("--script" in argv)
-
     if len(sys.argv) > 0:
         # valores por defecto:
         PATH_FILE = "./"
         PATH_DBF_FILES = "C:/"
         LEVEL = "MANZENT"
 
-        str_out = ""
+        str_out = "" # mensaje de información en salida (consola)
 
         # obtenemos opciones desde consola
         for i in range(len(argv)):
@@ -253,7 +275,6 @@ def main():
         f = open("script.sql", "w")
         f.write(createSqliteScript(G, path=PATH_CSV_FILES))
         f.close()
-        
         print "Script Sqlite fue generado como \"script.sql\"."
 
 if __name__ == '__main__':
